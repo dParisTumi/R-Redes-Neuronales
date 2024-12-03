@@ -1,9 +1,26 @@
 # importamos el paquete
 install.packages("neuralnet")
 library(neuralnet)
-x_train=data.frame(x=c(1,2,3,4,5))
-y_train=data.frame(y=c(2,4,6,8,10))
-model=neuralnet(y~x, data=cbind(x_train, y_train),hidden =0 , linear.output = TRUE)
-x_test=data.frame(x=c(10))
-print(predict(model,x_test))
-plot(model)
+data=read.csv("ds.csv")
+print(data)
+data$estado = as.factor(data$estado)
+set.seed(123)
+trainIndex=sample(1:nrow(data), 0.8*nrow(data))
+trainData=data[trainIndex, ]
+
+
+testData=data[-trainIndex, ]
+
+model=neuralnet(
+  estado~nota,
+  data=trainData,
+  hidden=c(5),
+  linear.output = FALSE,
+  stepmax = 1e6
+)
+
+predicion=predict(model, testData)
+print(predicion)
+predicion_class = apply(predictions, 1,which.max)
+print(predicion_class)
+print(testData)
